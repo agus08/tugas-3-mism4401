@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts">
-import { ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import axios from 'axios';
 
 
@@ -63,38 +63,41 @@ interface Crypto {
   rank: number; // variable baru
 }
 
-// State untuk menyimpan data dari API
-const cryptoList = ref<Crypto[]>([]);
-
-// fungsi untuk mengambil data dari API
-const fetchCryptoData = async () => {
-  cryptoList.value = []; // reset data
-  try {
-    const response = await axios.get('https://api.coinlore.net/api/tickers/');
-    // mapping data dari API ke dalam bentuk yang diinginkan
-    cryptoList.value = response.data.data.map((item: any) => ({
-      id: item.id,
-      symbol: item.symbol,
-      name: item.name,
-      price_usd: parseFloat(item.price_usd).toFixed(2), // format to 2 decimal places
-      rank: item.rank, // mapping rank
-    }));
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
-};
-
-export default {
-  setup() {
-    // Panggil fungsi fetchCryptoData saat komponen di-mount
-    fetchCryptoData();
-
+export default defineComponent({
+  name: 'Home',
+  
+  // State untuk menyimpan data dari API
+  data() {
     return {
-      cryptoList,
-      fetchCryptoData,
+      cryptoList: [] as Crypto[], // Gunakan typing Crypto[]
     };
   },
-};
+
+  mounted() {
+    // Panggil fungsi fetchCryptoData saat komponen di-mount
+    this.fetchCryptoData();
+  },
+
+  methods: {
+    // Fungsi untuk mengambil data dari API
+    async fetchCryptoData() {
+      this.cryptoList = []; // Reset data
+      try {
+        const response = await axios.get('https://api.coinlore.net/api/tickers/');
+        // Mapping data dari API ke dalam bentuk yang diinginkan
+        this.cryptoList = response.data.data.map((item: any) => ({
+          id: item.id,
+          symbol: item.symbol,
+          name: item.name,
+          price_usd: parseFloat(item.price_usd).toFixed(2), // Format to 2 decimal places
+          rank: item.rank, // Mapping rank
+        }));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    },
+  },
+});
 </script>
 
 <style scoped>
