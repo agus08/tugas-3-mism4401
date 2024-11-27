@@ -1,0 +1,7 @@
+{
+  "name": "tugas-3-mism4401",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
